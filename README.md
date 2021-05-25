@@ -3,7 +3,7 @@
 [![prerelease_build_sway](https://github.com/manjaro-arm-community/sway-images/actions/workflows/prerelease_build_sway.yaml/badge.svg)](https://github.com/manjaro-arm-community/sway-images/actions/workflows/prerelease_build_sway.yaml)
 [![release_build_sway](https://github.com/manjaro-arm-community/sway-images/actions/workflows/release_build_sway.yaml/badge.svg)](https://github.com/manjaro-arm-community/sway-images/actions/workflows/release_build_sway.yaml)
 
-![current screenshot](https://user-images.githubusercontent.com/6803419/109429537-72d1be80-79fc-11eb-8388-fc6e9906b59a.png)
+![current screenshot](https://user-images.githubusercontent.com/6803419/119480756-448d2200-bd52-11eb-8b66-253d490a8e3f.png)
 
 ## description
 
