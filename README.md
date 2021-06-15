@@ -1,23 +1,7 @@
 # Manjaro ARM Sway Profile
 
-[![prerelease_build_sway](https://github.com/manjaro-arm-community/sway-images/actions/workflows/prerelease_build_sway.yaml/badge.svg)](https://github.com/manjaro-arm-community/sway-images/actions/workflows/prerelease_build_sway.yaml)
-[![release_build_sway](https://github.com/manjaro-arm-community/sway-images/actions/workflows/release_build_sway.yaml/badge.svg)](https://github.com/manjaro-arm-community/sway-images/actions/workflows/release_build_sway.yaml)
-
 ![current screenshot](https://user-images.githubusercontent.com/6803419/120160335-71c84d00-c1f6-11eb-942a-d13260df4457.png)
 
-## description
+# Deprecation Notice
 
-Release Branch for Manjaro ARM Sway profile images
-
-## where can I download an image?
-
-Images are build and uploaded in a relatively regular interval to [github releases](https://github.com/manjaro-arm-community/sway-images/releases)
-
-## sources
-
-- [image profile](https://github.com/manjaro-arm-community/arm-profiles)
-
-## building
-
-1. check out the arm-profiles
-2. `sudo buildarmimg -d $DEVICE -e $EDITION -b $BRANCH -v $VERSION` 
+The GNOME profile builds are available on the main [ManjaroARM repository](https://github.com/manjaro-arm) or via the ManjaroARM Flasher tool now.
