@@ -6,16 +6,16 @@ jobs:
   prepare_prerelease:
     runs-on: ubuntu-latest
     steps:
-      -
-        uses: styfle/cancel-workflow-action@0.7.0
+      - 
+        uses: styfle/cancel-workflow-action@0.9.0
         with:
           access_token: ${{ github.token }}
-      -
+      - 
         id: time
         uses: nanzm/get-time-action@v1.1
         with:
           format: 'YYYYMMDD'
-      -
+      - 
         id: release
         uses: actions/create-release@v1
         env:
@@ -38,11 +38,11 @@ jobs:
         EDITION: [sway]
         BRANCH: [testing]
     steps:
-      -
-        uses: styfle/cancel-workflow-action@0.7.0
+      - 
+        uses: styfle/cancel-workflow-action@0.9.0
         with:
           access_token: ${{ github.token }}
-      -
+      - 
         id: time
         uses: nanzm/get-time-action@v1.1
         with:
@@ -51,8 +51,8 @@ jobs:
         name: install-arm-tools
         run: |
           sudo apt-get update
-          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools git build-essential cmake libarchive-dev pkg-config libcurl4-openssl-dev libgpgme-dev libssl-dev fakeroot dh-autoreconf qemu-utils qemu-efi-aarch64 qemu-system-arm qemu-user-static
-
+          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools git build-essential cmake libarchive-dev pkg-config libcurl4-openssl-dev libgpgme-dev libssl-dev fakeroot dh-autoreconf qemu-utils qemu-efi-aarch64 qemu-system-arm qemu-user-static mktorrent paperkey gpg u-boot-tools
+          
           sudo git clone https://gitlab.manjaro.org/packages/core/pacman.git
           cd pacman
           sudo wget https://sources.archlinux.org/other/pacman/pacman-5.2.2.tar.gz
@@ -66,21 +66,15 @@ jobs:
           sudo make V=1
           sudo make install
           cd ..
-          sudo install -m644 pacman.conf.x86_64 /etc/pacman.conf
+          sudo install -m644 pacman.conf /etc/pacman.conf
           sudo install -m644 makepkg.conf /etc/
-          sudo sed -i /etc/makepkg.conf \
-            -e "s|@CARCH[@]|x86_64|g" \
-            -e "s|@CHOST[@]|x86_64-pc-linux-gnu|g" \
-            -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
-          sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
-          sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
           sudo mkdir -p /etc/pacman.d
           sudo touch /etc/pacman.d/mirrorlist
           cd ..
-
+          
           sudo wget https://gitlab.manjaro.org/packages/community/manjaro-arm-qemu-static/-/raw/master/qemu-static.conf -O /usr/lib/binfmt.d/qemu-static.conf
           sudo service systemd-binfmt restart
-
+          
           pkgver=23
           sudo wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
           sudo tar -xvf arch-install-scripts-$pkgver.tar.gz
@@ -88,7 +82,7 @@ jobs:
           sudo make -C arch-install-scripts-$pkgver check
           sudo make -C arch-install-scripts-$pkgver PREFIX=/usr install
 
-          sudo git clone https://gitlab.manjaro.org/manjaro-arm/applications/manjaro-arm-tools.git
+          sudo git clone https://gitlab.manjaro.org/manjaro-arm/applications/manjaro-arm-tools.git -b oem-calamares
 
           install_m_a_tools() {
               pkgname=manjaro-arm-tools
@@ -102,11 +96,11 @@ jobs:
               sudo install -Dm755 $pkgname/lib/manjaro-arm-tools.conf /etc/manjaro-arm-tools/
           }
           install_m_a_tools
-
-          sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh
+          
+          sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
           sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh
-          sudo sed -i -e 's|2>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh
-      -
+          sudo sed -i -e 's|2>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh 
+      - 
         name: checkout
         uses: actions/checkout@v2
         with:
@@ -121,11 +115,11 @@ jobs:
           BRANCH: ${{ matrix.BRANCH }}
           VERSION: ${{ steps.time.outputs.time }}
         run: |
-          sudo mv -v /home/runner/work/sway-images/sway-images/arm-profiles /usr/share/manjaro-arm-tools/profiles
-          sudo buildarmimg -d $DEVICE -e $EDITION -b $BRANCH -v $VERSION -p btrfs
-
+          sudo mv -v $GITHUB_WORKSPACE/arm-profiles /usr/share/manjaro-arm-tools/profiles
+          sudo buildarmimg -d $DEVICE -e $EDITION -v $VERSION -b $BRANCH
+          
           ls -lasih /var/cache/manjaro-arm-tools/img
-
+          
           FILE_PATH=$(find /var/cache/manjaro-arm-tools/img -type f -name "*.img.xz" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp -v $FILE_PATH .
 
@@ -138,8 +132,8 @@ jobs:
           cp -v $FILE_PKG .
 
           echo "FILE_PKG=$(basename $FILE_PKG)" >> $GITHUB_ENV
-      -
-        id: upload_release
+      - 
+        id: upload_release 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -168,7 +162,7 @@ jobs:
           asset_path: ./${{ env.FILE_PKG }}
           asset_name: ${{ env.FILE_PKG }}
           asset_content_type: text/plain
-      -
+      - 
         name: rollback_release
         if: failure()
         uses: author/action-rollback@stable
@@ -176,4 +170,3 @@ jobs:
           release_id: ${{ needs.prepare_prerelease.outputs.release_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
